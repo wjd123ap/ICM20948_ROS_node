@@ -11,6 +11,7 @@
 // ROS
 #include <ros/ros.h>
 #include <sensor_msgs/Imu.h>
+#include <thread>
 #include "sensor_set/imu_lib.hpp"
 class Sensor_Node{
     public:
@@ -20,9 +21,6 @@ class Sensor_Node{
 
         using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
         using RowMatrixXf = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-        IMU_QUATERNION_DATA stQuaternion;
-	    IMU_ST_SENSOR_DATA stGyroRawData;
-	    IMU_ST_SENSOR_DATA stAccelRawData;
         ICM20948 imu1;
         ICM20948 imu2;
     private:

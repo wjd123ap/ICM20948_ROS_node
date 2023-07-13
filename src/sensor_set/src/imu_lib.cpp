@@ -15,9 +15,6 @@ ICM20948::ICM20948(){
     Ki=0.5;
 
 
-
-
-  
 }
 void ICM20948::I2Cinit(int i2c_devnum){
     fd = i2cInit(i2c_devnum);
@@ -157,9 +154,7 @@ void ICM20948::GyroOffset(void)
 }
 
 
-void ICM20948::imuDataGet(IMU_QUATERNION_DATA &pstQuaternion, 
-                IMU_ST_SENSOR_DATA &pstGyroRawData,
-                IMU_ST_SENSOR_DATA &pstAccelRawData)
+void ICM20948::imuDataGet()
                 {
         
         float MotionVal[6];
@@ -178,24 +173,28 @@ void ICM20948::imuDataGet(IMU_QUATERNION_DATA &pstQuaternion,
 
         mahonyAHRSupdate((float)MotionVal[0] * 0.01745, (float)MotionVal[1] * 0.01745, (float)MotionVal[2] * 0.01745,
                         (float)MotionVal[3], (float)MotionVal[4], (float)MotionVal[5]);
-        pstQuaternion.q0=q0;
-        pstQuaternion.q1=q1;
-        pstQuaternion.q2=q2;
-        pstQuaternion.q3=q3;
+        stQuaternion.q0=q0;
+        stQuaternion.q1=q1;
+        stQuaternion.q2=q2;
+        stQuaternion.q3=q3;
 
         /*
         pstAngles.fPitch = asin(-2 * q1 * q3 + 2 * q0* q2)* 57.295; // pitch
         pstAngles.fRoll = atan2(2 * q2 * q3 + 2 * q0 * q1, -2 * q1 * q1 - 2 * q2* q2 + 1)* 57.295; // roll
         pstAngles.fYaw = atan2(-2 * q1 * q2 - 2 * q0 * q3, 2 * q2 * q2 + 2 * q3 * q3 - 1) * 57.295; 
         */
-        pstGyroRawData.s16X = s16Gyro[0];
-        pstGyroRawData.s16Y = s16Gyro[1];
-        pstGyroRawData.s16Z = s16Gyro[2];
+        stGyroRawData.s16X = s16Gyro[0];
+        stGyroRawData.s16Y = s16Gyro[1];
+        stGyroRawData.s16Z = s16Gyro[2];
 
-        pstAccelRawData.s16X = s16Accel[0];
-        pstAccelRawData.s16Y = s16Accel[1];
-        pstAccelRawData.s16Z  = s16Accel[2];
-        }
+        stAccelRawData.s16X = s16Accel[0];
+        stAccelRawData.s16Y = s16Accel[1];
+        stAccelRawData.s16Z  = s16Accel[2];
+}
+
+
+
+
 
 
 void ICM20948::mahonyAHRSupdate(float gx, float gy, float gz, float ax, float ay, float az){
@@ -251,8 +250,13 @@ void ICM20948::mahonyAHRSupdate(float gx, float gy, float gz, float ax, float ay
 
 }
 
+
 void ICM20948::Close(void)
 {
     i2cClose(fd_address);
     std::cout<<    "imu sensor close"<<std::endl;
+}
+
+std::thread ICM20948::imuDataGet_thread(void){
+        return std::thread([this]{imuDataGet();});
 }

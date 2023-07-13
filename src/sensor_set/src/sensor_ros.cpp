@@ -1,5 +1,7 @@
 #include <cmath>
 #include "sensor_set/sensor_ros.hpp"
+
+using std::thread;
 Sensor_Node::Sensor_Node(ros::NodeHandle& nh){
     nh_=nh;
 
@@ -25,33 +27,37 @@ Sensor_Node::~Sensor_Node(){
 
 void Sensor_Node::updateimudata(const ros::TimerEvent&) {
     // To be changed
-    imu1.imuDataGet(stQuaternion,stGyroRawData,stAccelRawData);
-    
+    std::thread thread1=imu1.imuDataGet_thread();
+    std::thread thread2=imu2.imuDataGet_thread();
+    thread1.join();
+    thread2.join();
+    //imu1.imuDataGet(stQuaternion,stGyroRawData,stAccelRawData);
+    //imu2.imuDataGet(stQuaternion,stGyroRawData,stAccelRawData);
     imu1_msg.header.stamp = ros::Time::now();
     imu1_msg.header.frame_id = "imu_link";
-    imu1_msg.angular_velocity.x=stGyroRawData.s16X/GYRO_SCALE_FACTOR;
-    imu1_msg.angular_velocity.y=stGyroRawData.s16Y/GYRO_SCALE_FACTOR;
-    imu1_msg.angular_velocity.z=stGyroRawData.s16Z/GYRO_SCALE_FACTOR;
-    imu1_msg.linear_acceleration.x=stAccelRawData.s16X/ACCEL_SCALE_FACTOR;
-    imu1_msg.linear_acceleration.y=stAccelRawData.s16Y/ACCEL_SCALE_FACTOR;
-    imu1_msg.linear_acceleration.z=stAccelRawData.s16Z/ACCEL_SCALE_FACTOR;
-    imu1_msg.orientation.w=stQuaternion.q0;
-    imu1_msg.orientation.x=stQuaternion.q1;
-    imu1_msg.orientation.y=stQuaternion.q2;
-    imu1_msg.orientation.z=stQuaternion.q3;
+    imu1_msg.angular_velocity.x=imu1.stGyroRawData.s16X/GYRO_SCALE_FACTOR;
+    imu1_msg.angular_velocity.y=imu1.stGyroRawData.s16Y/GYRO_SCALE_FACTOR;
+    imu1_msg.angular_velocity.z=imu1.stGyroRawData.s16Z/GYRO_SCALE_FACTOR;
+    imu1_msg.linear_acceleration.x = imu1.stAccelRawData.s16X/ACCEL_SCALE_FACTOR;
+    imu1_msg.linear_acceleration.y = imu1.stAccelRawData.s16Y/ACCEL_SCALE_FACTOR;
+    imu1_msg.linear_acceleration.z = imu1.stAccelRawData.s16Z/ACCEL_SCALE_FACTOR;
+    imu1_msg.orientation.w = imu1.stQuaternion.q0;
+    imu1_msg.orientation.x = imu1.stQuaternion.q1;
+    imu1_msg.orientation.y = imu1.stQuaternion.q2;
+    imu1_msg.orientation.z = imu1.stQuaternion.q3;
     imu1Pub_.publish(imu1_msg);
-    imu2.imuDataGet(stQuaternion,stGyroRawData,stAccelRawData);
+    
     imu2_msg.header.stamp = ros::Time::now();
     imu2_msg.header.frame_id = "imu_link";
-    imu2_msg.angular_velocity.x=stGyroRawData.s16X/GYRO_SCALE_FACTOR;
-    imu2_msg.angular_velocity.y=stGyroRawData.s16Y/GYRO_SCALE_FACTOR;
-    imu2_msg.angular_velocity.z=stGyroRawData.s16Z/GYRO_SCALE_FACTOR;
-    imu2_msg.linear_acceleration.x=stAccelRawData.s16X/ACCEL_SCALE_FACTOR;
-    imu2_msg.linear_acceleration.y=stAccelRawData.s16Y/ACCEL_SCALE_FACTOR;
-    imu2_msg.linear_acceleration.z=stAccelRawData.s16Z/ACCEL_SCALE_FACTOR;
-    imu2_msg.orientation.w=stQuaternion.q0;
-    imu2_msg.orientation.x=stQuaternion.q1;
-    imu2_msg.orientation.y=stQuaternion.q2;
-    imu2_msg.orientation.z=stQuaternion.q3;
+    imu2_msg.angular_velocity.x = imu2.stGyroRawData.s16X/GYRO_SCALE_FACTOR;
+    imu2_msg.angular_velocity.y = imu2.stGyroRawData.s16Y/GYRO_SCALE_FACTOR;
+    imu2_msg.angular_velocity.z = imu2.stGyroRawData.s16Z/GYRO_SCALE_FACTOR;
+    imu2_msg.linear_acceleration.x = imu2.stAccelRawData.s16X/ACCEL_SCALE_FACTOR;
+    imu2_msg.linear_acceleration.y = imu2.stAccelRawData.s16Y/ACCEL_SCALE_FACTOR;
+    imu2_msg.linear_acceleration.z = imu2.stAccelRawData.s16Z/ACCEL_SCALE_FACTOR;
+    imu2_msg.orientation.w = imu2.stQuaternion.q0;
+    imu2_msg.orientation.x = imu2.stQuaternion.q1;
+    imu2_msg.orientation.y = imu2.stQuaternion.q2;
+    imu2_msg.orientation.z = imu2.stQuaternion.q3;
     imu2Pub_.publish(imu2_msg);
 }

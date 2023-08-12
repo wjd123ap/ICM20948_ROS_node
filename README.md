@@ -1,4 +1,4 @@
-# imu_node
+# ICM20948_ROS_node 
 ros sensor_node icm20948 i2c
 ## comand block
 ```

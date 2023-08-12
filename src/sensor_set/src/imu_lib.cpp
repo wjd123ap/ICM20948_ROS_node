@@ -78,7 +78,7 @@ void ICM20948::Init(void)
 }
 void ICM20948::GyroRead(int16_t& ps16X, int16_t& ps16Y, int16_t& ps16Z)
 {
-    uint8_t u8Buf[6];
+    uint8_t u8Buf[2];
     int16_t s16Buf[3] = {0}; 
     uint8_t i;
     //int32_t s32OutBuf[3] = {0};
@@ -164,9 +164,9 @@ void ICM20948::imuDataGet()
         ICM20948::GyroRead(s16Gyro[0], s16Gyro[1], s16Gyro[2]);
 
 
-        MotionVal[0]=s16Gyro[0]/131;
-        MotionVal[1]=s16Gyro[1]/131;
-        MotionVal[2]=s16Gyro[2]/131;
+        MotionVal[0]=s16Gyro[0]/131.0f;
+        MotionVal[1]=s16Gyro[1]/131.0f;
+        MotionVal[2]=s16Gyro[2]/131.0f;
         MotionVal[3]=s16Accel[0];
         MotionVal[4]=s16Accel[1];
         MotionVal[5]=s16Accel[2];

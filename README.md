@@ -2,6 +2,7 @@
 ros sensor_node icm20948 i2c
 ## comand block
 ```
+sudo usermod -aG i2c $USER
 git clone https://github.com/wjd123ap/ICM20948_ROS_node.git
 cd imu_node
 catkin_make

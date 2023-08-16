@@ -7,7 +7,7 @@ project(sensor_set)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(Eigen3 REQUIRED)
+
 find_package(
   catkin REQUIRED COMPONENTS
   roscpp
@@ -107,7 +107,6 @@ find_package(
 catkin_package(
   INCLUDE_DIRS
     include
-    ${EIGEN3_INCLUDE_DIRS}
   CATKIN_DEPENDS
     roscpp
     sensor_msgs
@@ -124,7 +123,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIRS}
+
 )
 add_library(imu_i2c src/IMU_i2c.c)
 add_library(imu_lib src/imu_lib.cpp)

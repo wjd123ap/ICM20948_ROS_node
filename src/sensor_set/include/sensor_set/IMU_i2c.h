@@ -50,6 +50,7 @@ typedef uint8_t state_check;
 #define REG_ADD_GYRO_ZOUT_H     0x37
 #define REG_ADD_GYRO_ZOUT_L     0x38
 #define REG_ADD_EXT_SENS_DATA_00 0x3B
+#define REG_ADD_EXT_SENS_DATA_01 0x3C
 #define REG_ADD_REG_BANK_SEL    0x7F
     #define REG_VAL_REG_BANK_0  0x00
     #define REG_VAL_REG_BANK_1  0x10
@@ -62,6 +63,7 @@ typedef uint8_t state_check;
 #define REG_ADD_GYRO_SMPLRT_DIV 0x00
 #define REG_ADD_GYRO_CONFIG_1   0x01
     #define REG_VAL_BIT_GYRO_DLPCFG_2   0x10 /* bit[5:3] */
+    #define REG_VAL_BIT_GYRO_DLPCFG_3   0x18 /* bit[5:3] */
     #define REG_VAL_BIT_GYRO_DLPCFG_4   0x20 /* bit[5:3] */
     #define REG_VAL_BIT_GYRO_DLPCFG_6   0x30 /* bit[5:3] */
     #define REG_VAL_BIT_GYRO_FS_250DPS  0x00 /* bit[2:1] */
@@ -72,6 +74,7 @@ typedef uint8_t state_check;
 #define REG_ADD_ACCEL_SMPLRT_DIV_2  0x11
 #define REG_ADD_ACCEL_CONFIG        0x14
     #define REG_VAL_BIT_ACCEL_DLPCFG_2  0x10 /* bit[5:3] */
+    #define REG_VAL_BIT_ACCEL_DLPCFG_3   0x18 /* bit[5:3] */
     #define REG_VAL_BIT_ACCEL_DLPCFG_4  0x20 /* bit[5:3] */
     #define REG_VAL_BIT_ACCEL_DLPCFG_6  0x30 /* bit[5:3] */
     #define REG_VAL_BIT_ACCEL_FS_2g     0x00 /* bit[2:1] */
@@ -79,8 +82,10 @@ typedef uint8_t state_check;
     #define REG_VAL_BIT_ACCEL_FS_8g     0x04 /* bit[2:1] */
     #define REG_VAL_BIT_ACCEL_FS_16g    0x06 /* bit[2:1] */    
     #define REG_VAL_BIT_ACCEL_DLPF      0x01 /* bit[0]   */
-
+#define REG_ADD_ODR_ALIGN_EN    0x09
 /* user bank 3 register */
+#define REG_ADD_I2C_MST_ODR_CONFIG 0x00
+#define REG_ADD_I2C_MST_CTRL    0X01
 #define REG_ADD_I2C_SLV0_ADDR   0x03
 #define REG_ADD_I2C_SLV0_REG    0x04
 #define REG_ADD_I2C_SLV0_CTRL   0x05
@@ -102,6 +107,7 @@ typedef uint8_t state_check;
 #define REG_ADD_MAG_ST2     0x10
 #define REG_ADD_MAG_DATA    0x11
 #define REG_ADD_MAG_CNTL2   0x31
+#define REG_ADD_MAG_CNTL3   0x32
     #define REG_VAL_MAG_MODE_PD     0x00
     #define REG_VAL_MAG_MODE_SM     0x01
     #define REG_VAL_MAG_MODE_10HZ   0x02
@@ -111,7 +117,7 @@ typedef uint8_t state_check;
     #define REG_VAL_MAG_MODE_ST     0x10
 /* define ICM-20948 MAG Register  end */
 
-#define MAG_DATA_LEN    6
+#define MAG_DATA_LEN    7
 
 /* 
  *  BMP280 I2c address
@@ -201,13 +207,19 @@ typedef struct imu_st_sensor_data_tag
   int16_t s16Y;
   int16_t s16Z;
 }IMU_ST_SENSOR_DATA;
-
+typedef struct st_avg_data_tag
+{
+  uint8_t u8Index;
+  int16_t s16AvgBuffer[4];
+}ST_AVG_DATA;
 
 
 int i2cInit(int i2c_devnum);
 void i2cClose(int *fd_address);
 uint8_t I2C_ReadOneByte(uint8_t DevAddr, uint8_t RegAddr,int *fd_address);
 void I2C_WriteOneByte(uint8_t DevAddr, uint8_t RegAddr, uint8_t value,int *fd_address);
+void I2C_WriteBurstByte(uint8_t DevAddr, uint8_t RegAddr, uint8_t* buffer,uint8_t count, int *fd_address);
+void I2C_ReadBurstByte(uint8_t DevAddr, uint8_t RegAddr, uint8_t* buffer,uint8_t count, int *fd_address);
 float invSqrt(float x);
 #ifdef __cplusplus
 }

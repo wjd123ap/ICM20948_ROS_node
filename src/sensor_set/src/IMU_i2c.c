@@ -38,6 +38,33 @@ uint8_t I2C_ReadOneByte(uint8_t DevAddr, uint8_t RegAddr, int *fd_address)
   return u8Ret;
 }
 
+void I2C_ReadBurstByte(uint8_t DevAddr, uint8_t RegAddr, uint8_t* buffer,uint8_t count, int *fd_address){
+  if (ioctl(*fd_address, I2C_SLAVE, DevAddr) < 0)
+  {
+    printf("Failed to acquire bus access and/or talk to slave.\n");
+    return ;
+  }
+  write(*fd_address, &RegAddr,1);
+  read(*fd_address, buffer, count);
+  return;
+}
+
+void I2C_WriteBurstByte(uint8_t DevAddr, uint8_t RegAddr, uint8_t* value,uint8_t count, int *fd_address){
+  int8_t *buf;
+
+  if (ioctl(*fd_address, I2C_SLAVE, DevAddr) < 0)
+  {
+    printf("Failed to acquire bus access and/or tCan't use SMBus Quick Write command, will skip some addressesalk to slave.\n");
+    return;
+  }
+  buf = malloc(count);
+  buf[0] = RegAddr;
+  buf[1] = value[0];
+  write(*fd_address, buf, count+1);
+  free(buf);
+  return;
+}
+
 void I2C_WriteOneByte(uint8_t DevAddr, uint8_t RegAddr, uint8_t value, int *fd_address)
 {
   int8_t *buf;

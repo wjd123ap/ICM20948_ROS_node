@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="sensor_set" type="sensor_node" name="sensor" output="screen">
+  </node>
+</launch>
